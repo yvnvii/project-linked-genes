@@ -8,14 +8,14 @@ from setuptools import setup
 
 # build command
 setup(
-    name="darwinday",
+    name="linkedgenes",
     version="0.0.1",
-    author="Deren Eaton",
-    author_email="de2356@columbia.edu",
+    author="Yuki Ogawa",
+    author_email="yo2368@columbia.edu",
     license="GPLv3",
-    description="A package for celebratin Darwin",
+    description="A package for exploring genes, phenotypes, and linked genes",
     classifiers=["Programming Language :: Python :: 3"],
     entry_points={
-        "console_scripts": ["darwinday = darwinday.__main__:main"]
+        "console_scripts": ["linkedgenes = mini_project.__main__:main"]
     },
 )
