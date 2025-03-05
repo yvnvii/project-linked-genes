@@ -6,7 +6,7 @@ Command line interface to darwin_day
 
 import argparse
 import emoji
-from module import Module
+from mini_project.module import Module
 
 def parse_command_line():
     "parses args for the funtion"
