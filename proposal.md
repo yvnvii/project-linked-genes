@@ -1,0 +1,304 @@
+Linked Genes Explorer
+
+This project is to create a program that retrieves genes that are linked to a given gene input.
+
+This mini-project implements two methods:
+
+# **1. Genes to phenotypes converter (command: --g2p)**
+## It asks what species and genes you are looking at. You can only put one species at a time, but you can put many genes of the species in the query. Then it looks for the phenotypes of each gene and creates a file for each gene that contains a list of phenotype of the gene. The file  is automatically named as "{species}_{gene}.txt".
+
+# **2. Phenotypes to genes converter (command: --p2g)**
+## It asks what species and phenotypes your are looking at. You can only put one species at a time, but you can put many phenotypes of the species at a time in the query. Then it looks for the genes that can cause each phenotype and creates a file for each phenotype that contain a list of genes that may be implicated. The file is automatically named as "{species}_{phenotype}.txt".
+
+Installation:
+conta install [list] -c conda-forge
+
+git clone [https://github.com/yvnvii/mini-project.git]
+cd ./mini-project
+
+
+## 🧬 What task/goal will the project accomplish and why is this useful?
+
+This project aims to create a tool that estimates an individual's genetic risk of inheriting a known disease based on a parent’s diagnosis, by leveraging genetic linkage and phenotypic trait associations — without requiring DNA sequencing.
+
+Instead of expensive genetic tests, the tool uses publicly available genomic data from Ensembl to:
+
+Identify genes linked to a disease-causing gene,
+
+Fetch known traits associated with those linked genes,
+
+And assess how many of those traits are shared between a parent and child.
+
+By comparing phenotypic similarity across genetically linked regions, the program provides a low-cost, accessible method to estimate genetic risk, especially for single-gene (monogenic) disorders like cystic fibrosis, Huntington's disease, and Tay-Sachs.
+
+This is useful for individuals who want to better understand their potential genetic risks when a parent is affected by a disease, but may not have access to expensive commercial genetic testing kits. It can serve as a pre-screening tool or a first step toward genetic counseling.
+
+
+
+
+## 💻 What type of data/input will a user provide to the program?
+Users will interact with the program via a command-line interface (CLI) or Jupyter Notebook, and will provide the following inputs:
+
+Phenotype or disease name
+The user will enter the name of a disease or phenotype known to affect their parent (e.g., "Cystic Fibrosis", "Huntington’s disease"). This input is used to look up causal genes via the Ensembl API.
+
+Species name
+Typically "homo_sapiens", but support is open for any species supported by Ensembl.
+
+Trait survey responses
+The program will ask the user simple yes/no questions about observable traits (e.g., “Do you experience increased mucus production?”), which are linked to genes near the disease-causing gene. These answers are used to estimate how similar the user’s traits are to their parent’s, indicating potential inheritance.
+
+(Optional) Parent’s trait data
+In advanced versions, the user may also input traits their affected parent exhibits, allowing for more direct phenotype comparison.
+
+There is no need to upload genetic data, such as VCF, FASTA, or raw DNA files — the tool is entirely question-based and API-driven.
+
+
+
+
+
+## 🌐 Where will the data come from?
+
+This program uses a combination of **user input** and **real-time data retrieved from the Ensembl REST API**, a public online genomics database.
+
+### 🧠 External Data Source: Ensembl REST API  
+All gene, variant, and phenotype information is fetched from Ensembl at runtime, using the following endpoints:
+
+| Purpose | Endpoint |
+|--------|----------|
+| Get causal genes for a phenotype | `/phenotype/term/{species}/{phenotype}` |
+| Get phenotypes for a gene | `/phenotype/gene/{species}/{gene}` |
+| Get gene location (start/end) | `/lookup/symbol/{species}/{gene}` |
+| Find nearby genes (linked) | `/overlap/region/{species}/{region}?feature=gene` |
+
+#### 🔗 API Base URL:  
+`https://rest.ensembl.org`
+
+---
+
+### 📥 Example of API Output Format
+
+**GET** `/phenotype/term/homo_sapiens/Cystic%20Fibrosis`
+
+```json
+[
+  {
+    "description": "Cystic Fibrosis",
+    "attributes": {
+      "associated_gene": "CFTR",
+      "p_value": "1.00e-20",
+      "risk_allele": "T"
+    },
+    "location": "7:117559593-117559593",
+    "Variation": "rs113993960",
+    "source": "NHGRI-EBI GWAS catalog"
+  }
+]
+```
+
+**GET** `/overlap/region/homo_sapiens/7:117059593-118059593?feature=gene`
+
+```json
+[
+  {
+    "id": "ENSG00000001626",
+    "external_name": "CFTR",
+    "start": 117120016,
+    "end": 117308718,
+    "strand": 1
+  },
+  {
+    "id": "ENSG00000137710",
+    "external_name": "WNT2",
+    "start": 117794556,
+    "end": 117864557,
+    "strand": 1
+  }
+]
+```
+
+---
+
+### 💾 Internal Data (Generated by the Program)
+
+The program temporarily stores:
+- Lists of genes linked to a phenotype
+- Traits associated with those genes
+- User responses to trait questions
+
+These can optionally be saved as `.txt`, `.json`, or `.csv` files for future reference or analysis.
+
+
+
+
+
+## 🧑‍💻 How will a user interact with the program?
+
+Users will interact with the program via a **Command Line Interface (CLI)** or a **Jupyter Notebook**, which prompts them step-by-step to explore inherited disease risk.
+
+Here’s what a typical interaction looks like in the CLI:
+
+```bash
+🧬 Welcome to the Genetic Risk Estimator
+
+🧠 Enter the phenotype or disease your parent has:
+> Cystic Fibrosis
+
+🔬 Fetching genes associated with 'Cystic Fibrosis'...
+🧬 Found: CFTR
+
+🔗 Finding genes closely linked to CFTR...
+🧬 Nearby genes: WNT2, NUPR1, EEF1A1
+
+🧪 Retrieving phenotypes associated with linked genes...
+🧬 WNT2 → Trait: abnormal lung function
+🧬 EEF1A1 → Trait: reduced mucus clearance
+
+🎯 Trait Survey — Do you exhibit the following traits?
+👉 Do you have abnormal lung function? (yes/no): yes
+👉 Do you experience reduced mucus clearance? (yes/no): no
+
+✅ You share 1 out of 2 traits with your parent.
+🧠 Estimated inheritance risk: ~50%
+```
+
+---
+
+### ⚙️ User Options (CLI/Notebook Toggles)
+
+- **Disease selection**: Manually type any disease or phenotype term (e.g., “Huntington’s disease”).
+- **Species input**: Defaults to `"homo_sapiens"` but accepts others (e.g., `"mus_musculus"`).
+- **Flanking region size**: Optional input to customize how far “linked” genes are searched (e.g., ±100kb to ±1Mb).
+- **Trait responses**: Simple yes/no answers when prompted.
+
+The interface is designed to be simple, with no need for technical background or genetic data files.
+
+
+
+
+## 📤 What type of output will the program produce?
+
+The program outputs a combination of **text-based results** and optionally **saves data to file** for future reference.
+
+The default output is printed directly to the console (STDOUT), but users also have the option to save results as a `.txt` or `.json` file.
+
+---
+
+### 🧾 Example of Text Output (STDOUT)
+
+```bash
+🧬 Linked Trait Summary
+-----------------------
+Parent's Disease: Cystic Fibrosis
+Causal Gene: CFTR
+Nearby Genes Checked: WNT2, EEF1A1, NUPR1
+
+Phenotypic Traits Surveyed:
+✓ WNT2 → Trait: abnormal lung function → YOU: yes
+✗ EEF1A1 → Trait: reduced mucus clearance → YOU: no
+✗ NUPR1 → Trait: pancreatic insufficiency → YOU: no
+
+✅ Shared Traits: 1 out of 3
+🧠 Estimated Risk of Inheriting Cystic Fibrosis: 33%
+
+📌 Risk Level: MODERATE
+📣 Consider speaking with a healthcare provider or genetic counselor.
+```
+
+---
+
+### 💾 Optional File Output (JSON format)
+
+```json
+{
+  "disease": "Cystic Fibrosis",
+  "causal_gene": "CFTR",
+  "linked_genes": ["WNT2", "EEF1A1", "NUPR1"],
+  "user_traits": {
+    "WNT2": true,
+    "EEF1A1": false,
+    "NUPR1": false
+  },
+  "shared_trait_count": 1,
+  "total_traits": 3,
+  "estimated_risk": "33%",
+  "risk_level": "MODERATE"
+}
+```
+
+---
+
+### 📊 Optional Future Enhancements
+- Bar plots or pie charts of shared traits
+- Export to PDF report
+- Web version with clickable trait survey
+
+---
+
+### ✅ Summary
+- **Most useful for users?** Yes — it explains what was checked and why.
+- **Where does it go?** Primarily console output, with optional save-to-file.
+- **Is it clear and interpretable?** Very — even for non-geneticists.
+
+
+
+
+
+## 🔍 What other tools currently exist to do this task, or something similar?
+
+There are a number of tools and services that assess genetic disease risk, but **none offer a trait-based, low-cost, gene linkage-informed approach** like this project. Most alternatives fall into two main categories:
+
+---
+
+### 🧬 1. **Direct-to-Consumer DNA Testing Services**
+
+These companies use actual DNA samples to analyze disease risk:
+
+- **23andMe**  
+  [https://www.23andme.com/](https://www.23andme.com/)  
+  Offers health reports for conditions like BRCA breast cancer mutations and cystic fibrosis by genotyping user saliva samples.  
+  💰 **Expensive** (~$100–$200)  
+  🔐 **Requires genetic data & sample**
+
+- **AncestryDNA + Traits**  
+  [https://www.ancestry.com/dna/](https://www.ancestry.com/dna/)  
+  Focuses more on ancestry but includes trait reports; disease risk estimation is limited.  
+  🧬 DNA-based  
+  ⚠️ No support for inherited disease estimation via linkage
+
+---
+
+### 💻 2. **Clinical Genomics Tools**
+
+These tools are used in hospitals or by genetic counselors:
+
+- **ClinVar (NIH/NCBI)**  
+  [https://www.ncbi.nlm.nih.gov/clinvar/](https://www.ncbi.nlm.nih.gov/clinvar/)  
+  Database of variants with clinical significance, but not an interactive tool. Requires the user to know their own variant IDs or gene info.  
+  🔍 **Reference database**, not patient-facing.
+
+- **GeneDx** / **Invitae**  
+  [https://www.invitae.com/](https://www.invitae.com/)  
+  Clinical-grade genetic testing companies offering disease panels for individuals and families.  
+  💰 **Medical-grade** → costly  
+  ⚠️ Requires physician or test ordering
+
+---
+
+## 🌟 How Is This Program Different?
+
+| Feature | Existing Tools | This Project |
+|--------|----------------|--------------|
+| 🧬 Requires DNA | ✅ Yes | ❌ No |
+| 💰 Cost | High | Free |
+| 🧠 Requires Genetics Knowledge | Often | No |
+| 🔗 Uses Gene Linkage Info | ❌ Rarely | ✅ Yes |
+| 👥 Includes Family/Parent Input | Rare | ✅ Yes |
+| 📊 Trait-Based Survey | ❌ No | ✅ Yes |
+
+This program is **unique** in that it estimates disease inheritance risk **without any genetic testing**, using:
+- **publicly available gene-phenotype data**,
+- **trait comparison**, and
+- **genetic linkage analysis**.
+
+It’s like a **“pre-genetic test”** for individuals who can’t afford or access commercial kits — giving people a first glimpse into potential inherited risks using only traits and public data.
