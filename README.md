@@ -1,19 +1,25 @@
-Linked Genes Explorer
+# Genetic Linkage-Based Risk Estimator
 
-This project is to create a program that retrieves genes that are linked to a given gene input.
+This project aims to create a tool that estimates an individual's genetic risk of inheriting a known disease based on a parent’s diagnosis, by leveraging genetic linkage and phenotypic trait associations — without requiring DNA sequencing.
 
-This mini-project implements two methods:
+Instead of expensive genetic tests, the tool uses publicly available genomic data from Ensembl to:
+- Identify genes linked to a disease-causing gene,
+- Fetch known traits associated with those linked genes,
+- And assess how many of those traits are shared between a parent and child.
 
-# **1. Genes to phenotypes converter (command: --g2p)**
-## It asks what species and genes you are looking at. You can only put one species at a time, but you can put many genes of the species in the query. Then it looks for the phenotypes of each gene and creates a file for each gene that contains a list of phenotype of the gene. The file  is automatically named as "{species}_{gene}.txt".
+By comparing phenotypic similarity across genetically linked regions, the program provides a low-cost, accessible method to estimate genetic risk, especially for single-gene (monogenic) disorders like cystic fibrosis, Huntington's disease, and Tay-Sachs.
 
-# **2. Phenotypes to genes converter (command: --p2g)**
-## It asks what species and phenotypes your are looking at. You can only put one species at a time, but you can put many phenotypes of the species at a time in the query. Then it looks for the genes that can cause each phenotype and creates a file for each phenotype that contain a list of genes that may be implicated. The file is automatically named as "{species}_{phenotype}.txt".
+### in development
 
-Installation:
-conta install [list] -c conda-forge
+To install and contribute to the development of this tool locally, follow the steps below:
 
-git clone [https://github.com/yvnvii/mini-project.git]
-cd ./mini-project
+```bash
+# Install dependencies (update the list as needed)
+conda install requests emoji -c conda-forge
 
+# Clone the repository
+git clone https://github.com/yvnvii/project-linked-genes.git
+cd project-linked-genes
 
+# Install the package in editable mode
+pip install -e .
