@@ -30,13 +30,20 @@ class Module:
     url = f"{Module.ENSEMBL_API}/phenotype/term/{species}/{phenotype_term}?content-type=application/json"
     response = requests.get(url)
     if response.status_code == 200:
-      data = response.json()
-      genes = [entry["Gene"] for entry in data if "Gene" in entry]
-      genes = genes + [entry["Variation"] for entry in data if "Variation" in entry]
-      return genes
+        data = response.json()
+
+        # Only collect valid gene names
+        genes = []
+        for entry in data:
+            gene_name = entry.get("associated_gene")
+            if gene_name and gene_name != "":
+                genes.append(gene_name)
+
+        return list(set(genes))  # Remove duplicates
     else:
-      print(emoji.emojize(":warning: "),f"Error fetching genes for {phenotype_term}: {response.status_code}")
-      return []
+        print(emoji.emojize(":warning: "), f"Error fetching genes for {phenotype_term}: {response.status_code}")
+        return []
+
 
   def get_ld_variants(self, species, variant_id, population):
     """
@@ -71,27 +78,30 @@ class Module:
   def get_genotypes_call(self):
     user_species = input(emoji.emojize(":magnifying_glass_tilted_right: Enter species name: "))
     user_phenotypes = input(emoji.emojize(":microbe: Enter phenotype term: "))
-    phenotypelist = user_phenotypes.split()
+    phenotype = user_phenotypes.strip()  # Keep full input
+    genes = self.get_genes(phenotype, user_species)
 
-    for pheno in phenotypelist:
-      genes = self.get_genes(pheno, user_species)
-      if genes:
-        with open(f"{user_species}_{pheno}.txt", "a") as file:
-          cleaned_genes = [self.clean_input(gene) for gene in genes] 
-          file.write("\n".join(cleaned_genes) + "\n")
-        print(emoji.emojize(":floppy_disk: "), f"genes for {pheno} saved to {user_species}_{pheno}.txt")
-      else:
-        print(emoji.emojize(":cross_mark: "),f"No phenotypes found for {pheno}")
+    if genes:
+      with open(f"{user_species}_{phenotype}.txt", "a") as file:
+        cleaned_genes = [self.clean_input(gene) for gene in genes] 
+        file.write("\n".join(cleaned_genes) + "\n")
+      print(emoji.emojize(":floppy_disk: "), f"genes for {pheno} saved to {user_species}_{phenotype}.txt")
+    else:
+      print(emoji.emojize(":cross_mark: "),f"No phenotypes found for {phenotype}")
 
     if(input("proceed to find linked genes? [y/n]: ")=="y"):
-      self.get_ld_variants_call(file = f"{user_species}_{pheno}")
+      self.get_ld_variants_call(file = f"{user_species}_{phenotype}")
     else:
       print("done")
 
   def get_ld_variants_call(self, file= False):
 
     filepath = file if file else input(emoji.emojize(":magnifying_glass_tilted_right: Enter file path with a list of genes: "))
-    species = species if file else input(emoji.emojize(":magnifying_glass_tilted_right: Enter species name: "))
+    if not file:
+        species = input(emoji.emojize(":magnifying_glass_tilted_right: Enter species name: "))
+    else:
+        species = file.split("_")[0]  # Extract species from filename
+
     population = input(emoji.emojize(":magnifying_glass_tilted_right: Enter population: "))
 
 
