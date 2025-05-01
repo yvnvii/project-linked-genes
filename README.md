@@ -23,3 +23,6 @@ cd project-linked-genes
 
 # Install the package in editable mode
 pip install -e .
+```
+
+[Link Text](https://docs.google.com/presentation/d/1to-E5VGYmTZpUr2RKmmmfa3kL9oDQN7IqkT8eVcG2sI/edit?usp=sharing)
