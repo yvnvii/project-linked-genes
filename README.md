@@ -1,6 +1,6 @@
-# LDExplorer
+# 🧬 LDExplorer 🧬
 
-**LDExplorer** is a command-line tool for exploring linkage disequilibrium (LD) patterns in SNPs associated with a specific phenotype across a human population. It uses the GWAS Catalog and LDLink APIs to identify associated SNPs, find linked variants, and retrieve traits related to those linked variants.
+**LDExplorer** is a tool for exploring linkage disequilibrium (LD) patterns in SNPs associated with a specific phenotype across a human population. It uses the GWAS Catalog and LDLink APIs to identify associated SNPs, find linked variants, and retrieve traits related to those linked variants.
 
 ---
 
@@ -12,6 +12,15 @@
 - Identify correlated alleles and their associated traits
 - Filter results by odds ratio, presence of trait info, or trait keywords
 - Export results to JSON (optionally to CSV)
+
+---
+
+## ⚙️ Versions
+
+There are three versions you can use.
+1. Command-line tool
+2. Streamlit tool
+3. Jupyter Notebook
 
 ---
 
