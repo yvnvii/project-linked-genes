@@ -52,8 +52,8 @@ phenotype = st.sidebar.text_input("Phenotype (e.g., Alzheimer's disease)", "pree
 pop_label = st.sidebar.selectbox("Population", list(population_dict.keys()))
 population = population_dict[pop_label]
 
-odds_min = st.sidebar.slider("Min Odds Ratio", 0.0, 10.0, 0.0)
-odds_max = st.sidebar.slider("Max Odds Ratio", 0.0, 10.0, 10.0)
+odds_min = st.sidebar.slider("Min Odds Ratio", 0.0, 1.0, 0.0)
+odds_max = st.sidebar.slider("Max Odds Ratio", 0.0, 1.0, 1.0)
 
 with_trait = st.sidebar.checkbox("Only show variants with trait info", value=False)
 trait_filter = st.sidebar.text_input("Trait Keyword Filter (optional)")
