@@ -51,14 +51,14 @@ Solution 1:
 P(T|S) = Chance you have the trait if you have the SNP
 P(S|T) = Chance someone has a certain SNP if we know they have the trait
 
-2. Streamlit tool
+## 2. Streamlit tool
 
 ```bash
 cd final_submission
 streamlit run ldexplorer_streamlit.py 
 ```
 
-3. Jupyter Notebook
+## 3. Jupyter Notebook
 ```bash
 cd final_submission/notebook
 ```
