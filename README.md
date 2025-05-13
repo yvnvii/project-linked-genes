@@ -18,7 +18,18 @@
 ## ⚙️ Versions
 
 There are three versions you can use.
-1. Command-line tool
+
+### 1. Command-line tool
+
+working example:
+
+make sure you are in "project-linked-genes" directory
+```bash
+ldexplorer --phenotype "preeclampsia" --population EUR --output result.json
+```
+This returns all linked SNPs with traits and risk alleles. The result is saved in .json file in the same directory.
+
+
 2. Streamlit tool
 3. Jupyter Notebook
 
