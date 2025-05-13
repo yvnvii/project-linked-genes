@@ -1,28 +1,28 @@
-# Genetic Linkage-Based Risk Estimator
+# LDExplorer
 
-This project aims to create a tool that estimates an individual's genetic risk of inheriting a known disease based on a parent’s diagnosis, by leveraging genetic linkage and phenotypic trait associations — without requiring DNA sequencing.
+**LDExplorer** is a command-line tool for exploring linkage disequilibrium (LD) patterns in SNPs associated with a specific phenotype across a human population. It uses the GWAS Catalog and LDLink APIs to identify associated SNPs, find linked variants, and retrieve traits related to those linked variants.
 
-Instead of expensive genetic tests, the tool uses publicly available genomic data from Ensembl to:
-- Identify genes linked to a disease-causing gene,
-- Fetch known traits associated with those linked genes,
-- And assess how many of those traits are shared between a parent and child.
+---
 
-By comparing phenotypic similarity across genetically linked regions, the program provides a low-cost, accessible method to estimate genetic risk, especially for single-gene (monogenic) disorders like cystic fibrosis, Huntington's disease, and Tay-Sachs.
+## 🚀 Features
 
-### in development
+- Match phenotype to its corresponding GWAS EFO ID
+- Identify SNPs associated with the phenotype (based on p-value threshold)
+- Retrieve linked SNPs using LDLink (based on LD statistics like r²)
+- Identify correlated alleles and their associated traits
+- Filter results by odds ratio, presence of trait info, or trait keywords
+- Export results to JSON (optionally to CSV)
 
-To install and contribute to the development of this tool locally, follow the steps below:
+---
+
+## 🧱 Installation
+
+1. Clone this repository:
 
 ```bash
-# Install dependencies (update the list as needed)
-conda install requests emoji -c conda-forge
-
-# Clone the repository
-git clone https://github.com/yvnvii/project-linked-genes.git
-cd project-linked-genes
-
-# Install the package in editable mode
+git clone https://github.com/your-username/ldexplorer.git
 pip install -e .
+
 ```
 
 [Link Text](https://docs.google.com/presentation/d/1to-E5VGYmTZpUr2RKmmmfa3kL9oDQN7IqkT8eVcG2sI/edit?usp=sharing)
