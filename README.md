@@ -20,7 +20,8 @@
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/your-username/ldexplorer.git
+git clone https://github.com/yvnvii/project-linked-genes.git
+cd prokect-linked-genes
 pip install -e .
 
 ```
