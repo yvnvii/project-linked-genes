@@ -11,7 +11,7 @@
 - Retrieve linked SNPs using LDLink (based on LD statistics like r²)
 - Identify correlated alleles and their associated traits
 - Filter results by odds ratio, presence of trait info, or trait keywords
-- Export results to JSON (optionally to CSV)
+- Export results to JSON
 
 ---
 
