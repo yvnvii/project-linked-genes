@@ -133,7 +133,7 @@ with tab2:
     st.header("🧮 Bayesian SNP-Trait Inference")
     with st.form("bayes_form"):
         OR_input = st.number_input("Odds Ratio (OR)", min_value=0.0, step=0.01, value=1.0)
-        PS_input = st.number_input("SNP Frequency in Population (P(S))", min_value=0.0, max_value=1.0, step=0.01, value=0.2)
+        PS_input = st.number_input("Risk Frequency (SNP Frequency in Population) (P(S))", min_value=0.0, max_value=1.0, step=0.01, value=0.2)
         PT_input = st.number_input("Trait Frequency in Population (P(T))", min_value=0.0, max_value=1.0, step=0.001, value=0.01)
         submitted = st.form_submit_button("Run Bayesian Inference")
 
