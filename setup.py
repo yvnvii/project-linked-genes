@@ -18,7 +18,7 @@ setup(
     packages=find_packages(where="final_submission", include=["ldexplorer", "ldexplorer.*"]),
     package_dir={"": "final_submission"},
     entry_points={
-        "console_scripts": ["ldexplorer = ldexplorer.__main__:main"]
+        "console_scripts": ["ldexplorer = ldexplorer.__main__:main", "bayesian = ldexplorder.bayesian:main"]
     },
 )
 
