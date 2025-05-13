@@ -2,6 +2,12 @@ import streamlit as st
 import json
 import pandas as pd
 from ldexplorer.module import LD
+import sympy as sp
+from ldexplorer.bayesian import estimate_trait_given_snp, estimate_snp_given_trait
+
+
+tab1, tab2 = st.tabs(["LD Explorer", "Bayesian Inference"])
+
 
 # --- Population List ---
 population_dict = {
@@ -122,3 +128,21 @@ if run_button:
 else:
     st.markdown("👉 Use the sidebar to configure your parameters and click **Run LD Analysis**.")
 
+
+with tab2:
+    st.header("🧮 Bayesian SNP-Trait Inference")
+    with st.form("bayes_form"):
+        OR_input = st.number_input("Odds Ratio (OR)", min_value=0.0, step=0.01, value=1.0)
+        PS_input = st.number_input("SNP Frequency in Population (P(S))", min_value=0.0, max_value=1.0, step=0.01, value=0.2)
+        PT_input = st.number_input("Trait Frequency in Population (P(T))", min_value=0.0, max_value=1.0, step=0.001, value=0.01)
+        submitted = st.form_submit_button("Run Bayesian Inference")
+
+    if submitted:
+        p_t_given_s = estimate_trait_given_snp(OR_input, PS_input, PT_input)
+        if p_t_given_s is None:
+            st.error("❌ Could not compute a valid solution for P(T|S). Please check your inputs.")
+        else:
+            p_s_given_t = estimate_snp_given_trait(p_t_given_s, PS_input, PT_input)
+            st.success("✅ Calculation Successful")
+            st.markdown(f"**P(T|S)** = `{p_t_given_s}`")
+            st.markdown(f"**P(S|T)** = `{p_s_given_t}`")
