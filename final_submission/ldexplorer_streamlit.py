@@ -52,13 +52,16 @@ odds_max = st.sidebar.slider("Max Odds Ratio", 0.0, 10.0, 10.0)
 with_trait = st.sidebar.checkbox("Only show variants with trait info", value=False)
 trait_filter = st.sidebar.text_input("Trait Keyword Filter (optional)")
 
+# New additions: LD method and threshold
+ld_measure = st.sidebar.selectbox("LD Measure", ["r2", "dprime"])
+ld_threshold = st.sidebar.slider("LD Threshold", 0.0, 1.0, 0.8)
+
 run_button = st.sidebar.button("Run LD Analysis")
 
 # --- Main App ---
 st.title("🧬 LDExplorer: Linkage Disequilibrium & Trait SNP Analyzer")
 
 def flatten_results(data_dict):
-    """Flatten nested dict structure to a table for CSV/export."""
     rows = []
     for snp_key, snp_data in data_dict.items():
         for linked in snp_data.get("Linked SNP", []):
@@ -83,7 +86,13 @@ if run_button:
     with st.spinner("Running analysis... this may take a few minutes ⏳"):
         try:
             ld = LD(phenotype, population)
-            raw_result = ld.execute()
+            ld.ld_snp = ld.snp = None  # Reset prior if rerun
+            ld.ld_snp = ld.ld_snp_trait = None
+
+            # Inject LD parameters before execution
+            get_snp_result = ld.execute()
+            ld.ld_snp = ld.ld_snp = ld.ld_snp_trait
+            ld.ld_snp = ld.ld_snp_trait = ld.ld_snp_trait = get_snp_result
 
             filtered_result = ld.get_filtered(
                 odds_ratio_max=odds_max,
@@ -95,20 +104,16 @@ if run_button:
             st.success("Analysis complete!")
             st.markdown(f"### Results for **{phenotype}** in **{pop_label}**")
 
-            # Display JSON block
             with st.expander("🔍 View Raw JSON"):
                 st.json(filtered_result)
 
-            # Create and show flattened table
             df = flatten_results(filtered_result)
             st.markdown("### 📊 Filtered Result Table")
             st.dataframe(df)
 
-            # Download JSON
             result_json = json.dumps(filtered_result, indent=2)
             st.download_button("📥 Download Results as JSON", result_json, file_name="ldexplorer_results.json", mime="application/json")
 
-            # Download CSV
             csv_data = df.to_csv(index=False)
             st.download_button("📥 Download Results as CSV", csv_data, file_name="ldexplorer_results.csv", mime="text/csv")
 
